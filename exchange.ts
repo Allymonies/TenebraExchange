@@ -4,31 +4,31 @@ import WebSocket from 'ws';
 import process from 'process';
 import Big from 'big.js';
 import { Currency } from "./types";
+import config from "./config.json";
 
 Big.RM = Big.roundDown
 
-const sourceSyncNode: string = process.env.SOURCE_NODE ?? "https://krist.ceriat.net";
-const targetSyncNode: string = process.env.TARGET_NODE ?? "https://tenebra.lil.gay";
-const sourcePrivKey: string = process.env.PRIVATE_KEY ?? "123";
-const targetPrivKey: string = process.env.PRIVATE_KEY ?? "123";
-
 const currencies: Record<string, Currency> = {
   "tenebra": {
-    syncNode: targetSyncNode,
-    privateKey: targetPrivKey,
+    syncNode: "https://tenebra.lil.gay",
+    privateKey: "",
     decimals: 0,
     name: "exchange",
     exchange: {}
   },
   "krist": {
-    syncNode: sourceSyncNode,
-    privateKey: sourcePrivKey,
+    syncNode: "https://krist.ceriat.net",
+    privateKey: "",
     decimals: 0,
     name: "portal",
     exchange: {
       tenebra: new Big("10.0")
     }
   }
+}
+
+for (const [currency, privateKey] of Object.entries(config.privateKeys)) {
+  currencies[currency].privateKey = privateKey;
 }
 
 //Thanks Lemmmy for this code i stole (for all of address generation)
